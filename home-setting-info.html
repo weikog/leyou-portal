@@ -63,10 +63,10 @@ $(function(){
                     <div class="person-info">
                         <div class="person-photo"><img src="img/_/photo.png" alt=""></div>
                         <div class="person-account">
-                            <span class="name">Michelle</span>
-                            <span class="safe">账户安全</span>
+                            <span class="name">{{user.username}}</span>
+                            <span class="safe"><a href="#" @click="logout">退出登录 </a></span>
                         </div>
-                        <div class="clearfix"></div>
+                        <div class="clearfix" ></div>
                     </div>
                     <div class="list-items">
                         <dl>
@@ -162,7 +162,8 @@ $(function(){
                                     <div class="control-group">
                                         <label for="sanwei" class="control-label"></label>
                                         <div class="controls">
-                                            <button type="submit" class="sui-btn btn-primary">立即注册</button>
+                                            <input type="hidden" name="id" v-model="user.id" />
+                                            <button type="submit" class="sui-btn btn-primary" @click="submit">保存信息</button>
                                         </div>
                                     </div>
                                 </form>
@@ -191,5 +192,81 @@ $(function(){
 	<div class="clearfix footer"></div>
 	<script type="text/javascript">$(".footer").load("foot.html");</script>
 	<!--页面底部END-->
+
+<script src="./js/vue/vue.js"></script>
+<script src="./js/axios.min.js"></script>
+<script src="./js/common.js"></script>
+<script src="./js/plugins/jquery/jquery.cookie.js"></script>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#account",
+        data: {
+            user: {},
+            orders:[],
+            query:{
+                status:0,
+                page:1,
+                rows:5
+            }
+        },
+        created() {
+            // 有token，曾经登录过，查询用户信息
+            ly.http.get("/auth/verify")
+                .then(resp => {
+                    this.user = resp.data;
+                    // 查询订单信息
+                    this.loadOrder();
+                })
+                .catch(() => {
+                    // 去登录
+                    this.gotoLogin();
+                });
+        },
+        methods: {
+            logout() {
+                // 删除cookie中的token即可
+                Cookies.remove("LY_TOKEN",{
+                    path:"/",
+                    domain:"leyou.com"
+                });
+                window.location = 'http://www.leyou.com'
+            },
+            gotoLogin() {
+                window.location = "login.html?returnUrl=" + window.location;
+            },
+            loadOrder(){
+                // 查询订单信息
+                ly.http.get("/order/list?"+ ly.stringify(this.query))
+                    .then(({data:{items,total}}) => {
+                        this.orders = items;
+                    }).catch(() => this.orders = [])
+            },
+            formatDate:ly.formatDate,
+            formatPrice: ly.formatPrice,
+            getTotalPrice(order){
+                return order.orderDetails.map(d => d.num * d.price).reduce((v1,v2) => v1 + v2, 0);
+            },
+            submit() {
+                //提交表单
+                leyou.http.post("/user/info", leyou.stringify(this.user))
+                    .then(resp => {
+                        if (resp.status === 201) {
+                            // 保存成功
+                            alert("保存成功！");
+                        }
+                    })
+                    .catch(() => alert("保存失败！"))
+            }
+        },
+        watch:{
+            'query':{
+                deep:true,
+                handler(){
+                    this.loadOrder();
+                }
+            }
+        }
+    });
+</script>
 
 </html>

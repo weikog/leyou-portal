@@ -73,7 +73,7 @@
                     </div>
                     <div>剩余<b class='owned'>{{sku.store-sku.sold}}</b>件</div>
                 </div>
-                <a class='sui-btn btn-block btn-buy' @click="toSeckillIten(sku.skuId)" target='_blank'>立即抢购</a>
+                <a class='sui-btn btn-block btn-buy' @click="toSeckillIten(sku.skuId)" target='_blank' value="{{sku.store>sku.sold?'立即抢购':'已抢完'}}"></a>
             </li>
         </ul>
     </div>

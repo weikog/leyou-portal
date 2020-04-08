@@ -413,8 +413,12 @@
                 ly.http.get("/auth/verify").then(() => {
                     //发送请求到后台，获取订单号
                     ly.http.get("/promotion/sale/"+this.sku.skuId).then((resp) => {
-                        console.log(resp.request.response)
-                        window.location.href = "pay.html?id=" + resp.request.response
+                        if (resp.request.response>0){
+                            console.log(resp.request.response)
+                            window.location.href = "pay.html?id=" + resp.request.response
+                        }else {
+                            alert("已销售完毕！")
+                        }
                     }).catch()
 
                 }).catch(() => {

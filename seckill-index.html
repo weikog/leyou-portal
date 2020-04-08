@@ -62,16 +62,16 @@
         <ul class="seckill" id="seckill" v-for="sku in skus" :key="sku.skuId">
             <li class="seckill-item">
                 <div class="pic" @onclick="toSeckillIten(sku.skuId)">
-                    <img :src="sku.image" alt=''>
+                    <img :src="sku.image" >
                 </div>
                 <div class="intro"><span>{{sku.title}}</span></div>
-                <div class='price'><b class='sec-price'>￥{{sku.price-sku.coupon}}</b><b class='ever-price'>￥{{sku.price}}</b></div>
+                <div class='price'><b class='sec-price'>￥{{ly.formatPrice(sku.price-sku.coupon)}}</b><b class='ever-price'>￥{{ly.formatPrice(sku.price)}}</b></div>
                 <div class='num'>
-                    <div>已售87%</div>
+                    <div>已售{{(sku.sold/sku.store)*100}}%</div>
                     <div class='progress'>
-                        <div class='sui-progress progress-danger'><span style='width: 70%;' class='bar'></span></div>
+                        <div class='sui-progress progress-danger'><span style='width: 30%;' class='bar'></span></div>
                     </div>
-                    <div>剩余<b class='owned'>29</b>件</div>
+                    <div>剩余<b class='owned'>{{sku.store-sku.sold}}</b>件</div>
                 </div>
                 <a class='sui-btn btn-block btn-buy' @click="toSeckillIten(sku.skuId)" target='_blank'>立即抢购</a>
             </li>
@@ -105,6 +105,7 @@
     var orderInfoVm = new Vue({
         el: "#seckillInfoApp",
         data: {
+            ly,
             skus: {},
             flag: false
         },

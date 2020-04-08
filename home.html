@@ -109,9 +109,9 @@
                             <div class="choose-order">
                                 <div class="sui-pagination pagination-large top-pages">
                                     <ul>
-                                        <li class="prev disabled"><a href="#">上一页</a></li>
-
-                                        <li class="next"><a href="#">下一页</a></li>
+                                        <li class="prev":class="{disabled:query.page===1}" ><a href="#" @click="query.page>1?query.page--:''">«上一页</a></li>
+                                        <li class="active"><a href="#">{{query.page}}</a></li>
+                                        <li class="next" :class="{disabled:query.page==totalPage}"><a href="#" @click="query.page<totalPage?query.page++:''">下一页»</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -188,12 +188,12 @@
                                 <ul>
                                     <li class="prev":class="{disabled:query.page===1}" ><a href="#" @click="query.page>1?query.page--:''">«上一页</a></li>
                                     <li :class="{active:p==query.page}" v-for="p in totalPage" @click="query.page=p"><a href="#">{{p}}</a></li>
-                                    <li class="dotted"><span>...</span></li>
+                                    <li class="dotted" v-if="totalPage>3 && totalPage-query.page>=1"><span>...</span></li>
                                     <li class="next" :class="{disabled:query.page==totalPage}"><a href="#" @click="query.page<totalPage?query.page++:''">下一页»</a></li>
                                 </ul>
-                                <div><span>共{{totalPage}}页&nbsp;</span><span>
+                                <div style="margin-top: -5px"><span>共{{totalPage}}页&nbsp;</span><span>
                                             到
-                                            <input type="text" id="pageNum" class="page-num"><button class="page-confirm" @click="swapPage()">确定</button>
+                                    <input type="text" id="pageNum" class="page-num"><button class="page-confirm" style="margin-top: 5px" @click="swapPage()">确定</button>
                                             页</span></div>
                             </div>
                         </div>

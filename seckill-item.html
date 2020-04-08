@@ -57,7 +57,7 @@ $(function(){
 			})
 		</script>
 </body>
-	<div class="py-container">
+	<div class="py-container" id="seckillItem">
 		<div id="item">
 			<div class="crumb-wrap">
 				<ul class="sui-breadcrumb">
@@ -383,5 +383,31 @@ $(function(){
 </script>
 <!--侧栏面板结束-->
 
+<script src="./js/vue/vue.js"></script>
+<script src="./js/vue/vuetify.js"></script>
+<script src="./js/axios.min.js"></script>
+<script src="./js/common.js"></script>
+<script type="text/javascript">
+    var orderInfoVm = new Vue({
+        el: "#seckillItem",
+        data: {
+            sku:{}
+        },
+        created() {
+            this.init();
+        },
+        methods: {
+            init(){
+                ly.http.get("promotion/sku/"+ly.getUrlParam("id")).then((resp)=>{
+                    console.log(resp)
+                    this.sku = resp.data
+				}).catch()
+			}
 
+
+        },
+        computed: {},
+        components: {}
+    });
+</script>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
@@ -59,17 +59,17 @@
 
     <!--商品列表-->
     <div class="goods-list">
-        <ul class="seckill" id="seckill" v-for="sku in skus" :key="sku.skuId">
-            <li class="seckill-item">
+        <ul class="seckill" id="seckill" >
+            <li class="seckill-item" v-for="sku in skus" :key="sku.skuId">
                 <div class="pic" @onclick="toSeckillIten(sku.skuId)">
-                    <img :src="sku.image" >
+                    <img :src="sku.images" >
                 </div>
                 <div class="intro"><span>{{sku.title}}</span></div>
                 <div class='price'><b class='sec-price'>￥{{ly.formatPrice(sku.price-sku.coupon)}}</b><b class='ever-price'>￥{{ly.formatPrice(sku.price)}}</b></div>
                 <div class='num'>
-                    <div>已售{{(sku.sold/sku.store)*100}}%</div>
+                    <div>已售{{(sku.sold/sku.store).toFixed(4)*100}}%</div>
                     <div class='progress'>
-                        <div class='sui-progress progress-danger'><span style='width: 30%;' class='bar'></span></div>
+                        <div class='sui-progress progress-danger'><span v-bind:style="'width:'+ (sku.sold/sku.store)*100+'%;'" class='bar'></span></div>
                     </div>
                     <div>剩余<b class='owned'>{{sku.store-sku.sold}}</b>件</div>
                 </div>

@@ -82,7 +82,7 @@
                 </div>
                 <div class="news">
                     <span><img src="img/_/clock.png"/>品优秒杀</span>
-                    <span class="overtime">距离结束：{{sku.beginTime-sku.endTime}}</span>
+                    <span class="overtime">距离结束：{{sku.beginTime-sku.endTime}}{{time}}</span>
                 </div>
                 <div class="summary">
                     <div class="summary-wrap">
@@ -92,8 +92,8 @@
                         </div>
                         <div class="fl price">
                             <i>¥</i>
-                            <em>{{sku.price-sku.coupon}}</em>
-                            <span>原价：{{sku.price}}</span>
+                            <em>{{ly.formatPrice(sku.price-sku.coupon)}}</em>
+                            <span>原价：{{ly.formatPrice(sku.price)}}</span>
                         </div>
                         <div class="fr remark">
 
@@ -393,10 +393,13 @@
         el: "#seckillItem",
         data: {
             ly,
-            sku: {}
+            sku: {},
+            time:null,
+            myVar:null
         },
         created() {
             this.init();
+
         },
         methods: {
             init() {
@@ -410,13 +413,18 @@
                 ly.http.get("/auth/verify").then(() => {
                     //发送请求到后台，获取订单号
                     ly.http.get("/promotion/sale/"+this.sku.skuId).then((resp) => {
-                        window.location.href = "pay.html?id=" + resp.orderId
+                        console.log(resp.request.response)
+                        window.location.href = "pay.html?id=" + resp.request.response
                     }).catch()
 
                 }).catch(() => {
                     window.location.href = "/login.html?returnUrl=" + window.location.href;
                 })
             },
+            // updateTime(){
+            //     alert(this.time)
+            //     this.time=new Date();
+            // }
         },
         computed: {},
         components: {}

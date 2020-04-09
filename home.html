@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" type="text/css" href="css/webbase.css"/>
     <link rel="stylesheet" type="text/css" href="css/pages-seckillOrder.css"/>
+    <script src="js/plugins/jquery/jquery.min.js"></script>
 </head>
 
 <body>
@@ -20,22 +21,6 @@
 <div id="nav-bottom"></div>
 <script type="text/javascript">$("#nav-bottom").load("top.html");</script>
 
-<script type="text/javascript" src="js/plugins/jquery/jquery.min.js"></script>
-<script type="text/javascript">
-    $(function () {
-        $("#service").hover(function () {
-            $(".service").show();
-        }, function () {
-            $(".service").hide();
-        });
-        $("#shopcar").hover(function () {
-            $("#shopcarlist").show();
-        }, function () {
-            $("#shopcarlist").hide();
-        });
-
-    })
-</script>
 <script type="text/javascript" src="js/plugins/jquery.easing/jquery.easing.min.js"></script>
 <script type="text/javascript" src="js/plugins/sui/sui.min.js"></script>
 <script type="text/javascript" src="js/plugins/jquery-placeholder/jquery.placeholder.min.js"></script>
@@ -106,7 +91,25 @@
                     </div>
                     <div class="order-detail">
                         <div class="orders">
-                            <div class="choose-order">
+                            <div class="choose-order" >
+                                <div class="alert-box" style="background-color:red; display:none;top: 150px;left: 35%;position: absolute;
+                                      show:true;z-index:9999;  width: 500px; height: 400px">
+                                    <div class="alert">
+                                        <div>
+                                            评论内容:<input  id="content" type="text" name="content" >
+                                        </div>
+                                        <div>
+                                            评分：<select  id="level" name="level" >
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                        </div>
+                                        <button id="submitComment" @click="out()">提交</button>
+                                    </div>
+                                </div>
                                 <div class="sui-pagination pagination-large top-pages">
                                     <ul>
                                         <li class="prev":class="{disabled:query.page===1}" ><a href="#" @click="query.page>1?query.page--:''">«上一页</a></li>
@@ -142,10 +145,12 @@
                                         <td width
                                                     ="5%" class="center">{{d.num}}
                                         </td>
-                                        <td width="8%" class="center" :rowspan="o.detailList.length" v-if="j === 0">
-                                            <ul class="unstyled" v-if="o.status === 3">
-                                                <li>已发货</li>
-                                                <li><a>退货/退款</a></li>
+                                        <td width="8%" class="center"  >
+                                            <ul class="unstyled">
+                                                <li  v-if="o.status === 3">已发货</li>
+                                                <li  v-if="o.status === 3"><a>退货/退款</a></li>
+                                                <li v-if="o.status === 4"><a id="commonForm" @click="handleComment(o.orderId,d.skuId)" class="sui-btn btn-info">立即评价</a>
+                                                </li>
                                             </ul>
                                         </td>
                                         <td width="10%" class="center" :rowspan="o.detailList.length" v-if="j === 0">
@@ -169,8 +174,6 @@
                                                 <li v-if="o.status === 2"><a href="#" class="sui-btn btn-info">提醒发货</a>
                                                 </li>
                                                 <li v-if="o.status === 3"><a href="#" class="sui-btn btn-info">确认收货</a>
-                                                </li>
-                                                <li v-if="o.status === 4"><a href="#" class="sui-btn btn-info">立即评价</a>
                                                 </li>
                                                 <li v-if="o.status === 3">4天23时后自动确认</li>
                                                 <li><a href="javascript:void(0)">取消订单</a></li>
@@ -302,7 +305,23 @@
 <script src="./js/vue/vue.js"></script>
 <script src="./js/axios.min.js"></script>
 <script src="./js/common.js"></script>
+
 <script src="./js/plugins/jquery/jquery.cookie.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#service").hover(function () {
+            $(".service").show();
+        }, function () {
+            $(".service").hide();
+        });
+        $("#shopcar").hover(function () {
+            $("#shopcarlist").show();
+        }, function () {
+            $("#shopcarlist").hide();
+        });
+
+    })
+</script>
 <script type="text/javascript">
     var vm = new Vue({
         el: "#account",
@@ -314,9 +333,16 @@
                 status: 0,
                 page: 1,
                 rows: 5
-            }
+            },
+            CommentForm:{
+                content:null,
+                level:5,
+                skuid:0,
+                orderId:0
+            },
         },
         created() {
+            // $('.alert-box').hide();
             // 有token，曾经登录过，查询用户信息
             ly.http.get("/auth/verify")
                 .then(resp => {
@@ -330,6 +356,29 @@
                 });
         },
         methods: {
+            out(){
+                this.CommentForm.level=$("#level").val();
+                this.CommentForm.content=$("#content").val();
+                ly.http.get("/comment/save",{
+                    params:this.CommentForm
+                    //     {
+                    //     orderId:this.CommentForm.orderId,
+                    //     level:this.CommentForm.level,
+                    //     skuid:this.CommentForm.skuid,
+                    //     content:this.CommentForm.content
+                    // }
+                } ).then(()=>{
+                    alert("保存成功")
+                    // location.href("http://www.leyou.com/home.html");
+                }).catch(
+                )
+                $(".alert-box").fadeOut();
+            },
+            handleComment(orderId,skuId){
+                $(".alert-box").fadeIn();
+                this.CommentForm.orderId=orderId;
+                this.CommentForm.skuid=skuId;
+            },
             logout() {
                 // 删除cookie中的token即可
                 Cookies.remove("LY_TOKEN", {

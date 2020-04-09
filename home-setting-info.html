@@ -1,38 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:http="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
     <title>设置-个人信息</title>
-     <link rel="icon" href="/assets/img/favicon.ico">
+    <link rel="icon" href="/assets/img/favicon.ico">
 
     <link rel="stylesheet" type="text/css" href="css/webbase.css" />
     <link rel="stylesheet" type="text/css" href="css/pages-seckillOrder.css" />
 </head>
 
 <body>
-    <!--页面顶部白条条，由js动态加载-->
-	<script type="text/javascript" src="plugins/jquery/jquery.min.js"></script>
-	<div class="nav-bottom"></div>
-    <script type="text/javascript">$(".nav-bottom").load("top.html");</script>
+<!--页面顶部白条条，由js动态加载-->
+<script type="text/javascript" src="plugins/jquery/jquery.min.js"></script>
+<div class="nav-bottom"></div>
+<script type="text/javascript">$(".nav-bottom").load("top.html");</script>
 
 <script type="text/javascript" src="js/plugins/jquery/jquery.min.js"></script>
 <script type="text/javascript">
-$(function(){
-	$("#service").hover(function(){
-		$(".service").show();
-	},function(){
-		$(".service").hide();
-	});
-	$("#shopcar").hover(function(){
-		$("#shopcarlist").show();
-	},function(){
-		$("#shopcarlist").hide();
-	});
+    $(function(){
+        $("#service").hover(function(){
+            $(".service").show();
+        },function(){
+            $(".service").hide();
+        });
+        $("#shopcar").hover(function(){
+            $("#shopcarlist").show();
+        },function(){
+            $("#shopcarlist").hide();
+        });
 
-})
+    })
 </script>
 <script type="text/javascript" src="js/plugins/jquery.easing/jquery.easing.min.js"></script>
 <script type="text/javascript" src="js/plugins/sui/sui.min.js"></script>
@@ -43,89 +43,93 @@ $(function(){
 <script type="text/javascript" src="js/plugins/citypicker/distpicker.js"></script>
 <script type="text/javascript" src="js/plugins/upload/uploadPreview.js"></script>
 <script type="text/javascript" src="js/pages/main.js"></script>
+<script src="./js/vue/vue.js"></script>
+<script src="./js/axios.min.js"></script>
+<script src="./js/common.js"></script>
 <script>
-            $(function() {               
-                $.ms_DatePicker({
-                    YearSelector: "#select_year2",
-                    MonthSelector: "#select_month2",
-                    DaySelector: "#select_day2"
-                });
-            });
-        </script>
+    $(function() {
+        $.ms_DatePicker({
+            YearSelector: "#select_year2",
+            MonthSelector: "#select_month2",
+            DaySelector: "#select_day2"
+        });
+    });
+</script>
 </body>
-    <!--header-->
-    <div id="account">
-        <div class="py-container">
-            <div class="yui3-g home">
-                <!--左侧列表-->
-                <div class="yui3-u-1-6 list">
+<!--header-->
+<div id="account">
+    <div class="py-container">
+        <div class="yui3-g home">
+            <!--左侧列表-->
+            <div class="yui3-u-1-6 list">
 
-                    <div class="person-info">
-                        <div class="person-photo"><img src="img/_/photo.png" alt=""></div>
-                        <div class="person-account">
-                            <span class="name">{{user.username}}</span>
-                            <span class="safe"><a href="#" @click="logout">退出登录 </a></span>
-                        </div>
-                        <div class="clearfix" ></div>
+                <div class="person-info">
+                    <div class="person-photo"><img :src="image" id="leftImage" style="width: 60px;height: 60px;border-radius: 50%"/></div>
+                    <div class="person-account">
+                        <span class="name">{{name}}</span>
+                        <span class="safe">账户安全</span>
                     </div>
-                    <div class="list-items">
-                        <dl>
-							<dt><i>·</i> 订单中心</dt>
-							<dd ><a href="home-index.html"   >我的订单</a></dd>
-							<dd><a href="home-order-pay.html" >待付款</a></dd>
-							<dd><a href="home-order-send.html"  >待发货</a></dd>
-							<dd><a href="home-order-receive.html" >待收货</a></dd>
-							<dd><a href="home-order-evaluate.html" >待评价</a></dd>
-						</dl>
-						<dl>
-							<dt><i>·</i> 我的中心</dt>
-							<dd><a href="home-person-collect.html" >我的收藏</a></dd>
-							<dd><a href="home-person-footmark.html" >我的足迹</a></dd>
-						</dl>
-						<dl>
-							<dt><i>·</i> 物流消息</dt>
-						</dl>
-						<dl>
-							<dt><i>·</i> 设置</dt>
-							<dd><a :href="'home-setting-info.html?id='+ user.id" class="list-active">个人信息</a></dd>
-							<dd><a href="home-setting-address.html"  >地址管理</a></dd>
-							<dd><a href="home-setting-safe.html" >安全管理</a></dd>
-						</dl>
-                    </div>
+                    <div class="clearfix"></div>
                 </div>
-                <!--右侧主内容-->
+                <div class="list-items">
+                    <dl>
+                        <dt><i>·</i> 订单中心</dt>
+                        <dd ><a href="home-index.html"   >我的订单</a></dd>
+                        <dd><a href="home-order-pay.html" >待付款</a></dd>
+                        <dd><a href="home-order-send.html"  >待发货</a></dd>
+                        <dd><a href="home-order-receive.html" >待收货</a></dd>
+                        <dd><a href="home-order-evaluate.html" >待评价</a></dd>
+                    </dl>
+                    <dl>
+                        <dt><i>·</i> 我的中心</dt>
+                        <dd><a href="home-person-collect.html" >我的收藏</a></dd>
+                        <dd><a href="home-person-footmark.html" >我的足迹</a></dd>
+                    </dl>
+                    <dl>
+                        <dt><i>·</i> 物流消息</dt>
+                    </dl>
+                    <dl>
+                        <dt><i>·</i> 设置</dt>
+                        <dd><a href="home-setting-info.html" class="list-active">个人信息</a></dd>
+                        <dd><a href="home-setting-address.html"  >地址管理</a></dd>
+                        <dd><a href="home-setting-safe.html" >安全管理</a></dd>
+                    </dl>
+                </div>
+            </div>
+            <!--右侧主内容-->
+            <div id = "homeApp">
                 <div class="yui3-u-5-6">
                     <div class="body userInfo">
                         <ul class="sui-nav nav-tabs nav-large nav-primary ">
                             <li class="active"><a href="#one" data-toggle="tab">基本资料</a></li>
-                            <li><a href="#two" data-toggle="tab">头像照片</a></li>
+                            <li><a href="#two" data-toggle="tab" @click="queryImage()">头像照片</a></li>
                         </ul>
                         <div class="tab-content ">
                             <div id="one" class="tab-pane active">
-                                <form id="form-msg" class="sui-form form-horizontal" action="/user/info" method="post">
+                                <form id="form-msg" class="sui-form form-horizontal">
                                     <div class="control-group">
                                         <label for="inputName" class="control-label">昵称：</label>
                                         <div class="controls">
-                                            <input type="text" id="inputName" name="name" v-model="user.name">
+                                            <input type="text" id="inputName" v-model=name placeholder="昵称">
                                         </div>
                                     </div>
                                     <div class="control-group">
                                         <label for="inputGender" class="control-label">性别：</label>
                                         <div class="controls">
-                                            <label data-toggle="radio" class="radio-pretty inline">
-                                            <input type="radio" name="gender" value="1" v-model="user.gender"><span>男</span>
-                                        </label>
-                                            <label data-toggle="radio" class="radio-pretty inline">
-                                            <input type="radio" name="gender" value="2" v-model="user.gender"><span>女</span>
-                                        </label>
+                                            <!-- <label data-toggle="radio" class="radio-pretty inline">-->
+                                            <input type="radio" name="gender" v-model=gender value=1><span>男</span>
+                                            <!--   </label>
+                                                   <label data-toggle="radio" class="radio-pretty inline">-->
+                                            <input type="radio" name="gender" v-model=gender value=2><span>女</span>
+                                            <!-- </label>-->
                                         </div>
                                     </div>
                                     <div class="control-group">
                                         <label for="inputPassword" class="control-label">生日：</label>
                                         <div class="controls">
-                                            <select id="select_year2" rel="1990" name="year" v-model="user.year"></select>年
-                                            <select id="select_month2" rel="4" name="month" v-model="user.month"></select>月
-                                            <select id="select_day2" rel="3" name="day" v-model="user.day"></select>日
+                                            <select id="select_year2" v-model="year" rel=1997></select>年
+                                            <select id="select_month2" v-model="month" rel=9></select>月
+                                            <select id="select_day2" v-model="day" rel=7></select>日
                                         </div>
                                     </div>
 
@@ -133,56 +137,79 @@ $(function(){
                                     <div class="control-group">
                                         <label for="inputPassword" class="control-label">所在地：</label>
                                         <div class="controls">
-                                            <div data-toggle="distpicker">
-                                                <div class="form-group area">
-                                                    <select class="form-control" id="province1" name="province" v-model="user.province"></select>
-                                                </div>
-                                                <div class="form-group area">
-                                                    <select class="form-control" id="city1" name="city" v-model="user.city"></select>
-                                                </div>
-                                                <div class="form-group area">
-                                                    <select class="form-control" id="district1" name="district" v-model="user.district"></select>
-                                                </div>
+                                            <!--<div data-toggle="distpicker">-->
+                                            <div class="form-group area">
+                                                <select id="province1" v-model=province @change="selectCity()">
+                                                    <option v-for="p in provinceList" :value="p.province"  :selected="p.province===province">
+                                                        {{p.province}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group area">
+                                                <select class="form-control" id="city1" v-model=city @change="selectDistrict()">
+                                                    <option v-for="c in cityList" :value="c.city"  :selected="c.city===city">
+                                                        {{c.city}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group area">
+                                                <select class="form-control" id="district1" v-model=district>
+                                                    <option v-for="d in districtList" :value="d.area"  :selected="d.area ===district ">
+                                                        {{d.area}}
+                                                    </option>
+                                                </select>
                                             </div>
                                         </div>
+                                        <!-- </div>-->
                                     </div>
                                     <div class="control-group">
                                         <label for="inputJob" class="control-label">职业：</label>
-                                        <div class="controls"><span class="sui-dropdown dropdown-bordered select"><span class="dropdown-inner"><a role="button" data-toggle="dropdown" href="#" class="dropdown-toggle">
-                                                <input name="job" type="hidden" data-rules="required" v-model="user.job"><i class="caret"></i><span>请选择</span></a>
-                                            <ul id="menu4" role="menu" aria-labelledby="drop4" class="sui-dropdown-menu">
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:void(0);" value="bj">程序员</a></li>
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:void(0);" value="sb">产品经理</a></li>
-                                                <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:void(0);" value="sb">UI设计师</a></li>
-                                            </ul>
-                                            </span>
+                                        <div class="controls">
+                                            <span class="sui-dropdown dropdown-bordered select">
+                                                <!--<span class="dropdown-inner">-->
+                                                    <select v-model="job">
+                                                        <option value="--">请选择</option>
+                                                        <option value="bj">程序员</option>
+                                                        <option value="sb">产品经理</option>
+                                                        <option value="ui">UI设计师</option>
+                                                    </select>
+                                                <!-- <a role="button" data-toggle="dropdown" href="#" class="dropdown-toggle">
+                                                 <input name=job  type="hidden" data-rules="required"><i class="caret"></i>
+                                                     <span>请选择</span>
+                                                 </a>
+                                             <ul id="menu4" role="menu" aria-labelledby="drop4" class="sui-dropdown-menu">
+                                                 <li role="presentation"><a @click="selectJob('bj')" role="menuitem" tabindex="-1" href="javascript:void(0);" value="bj">程序员</a></li>
+                                                 <li role="presentation"><a @click="selectJob('sb')" role="menuitem" tabindex="-1" href="javascript:void(0);" value="sb">产品经理</a></li>
+                                                 <li role="presentation"><a @click="selectJob('ui')" role="menuitem" tabindex="-1" href="javascript:void(0);" value="ui">UI设计师</a></li>
+                                             </ul>-->
+                                                <!--</span>-->
                                             </span>
                                         </div>
                                     </div>
                                     <div class="control-group">
                                         <label for="sanwei" class="control-label"></label>
+                                        <input type="hidden" name="id" v-model="user.id">
                                         <div class="controls">
-                                            <input type="hidden" name="id" v-model="user.id" />
-                                            <!--<button class="sui-btn btn-primary">保存信息</button>-->
-                                            <a href="javascript:;" class="sui-btn btn-primary" @click="submit">保存信息</a>
+                                            <button type="button" @click="saveUserInfo()" class="sui-btn btn-primary">立即注册</button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                             <div id="two" class="tab-pane">
-                                <form id="form-img">
-                                    <div class="new-photo">
-                                        <p>当前头像：</p>
-                                        <div class="upload">
-                                            <img id="imgShow_WU_FILE_0" width="100" height="100" src="img/_/photo_icon.png" alt="">
-                                            <input type="file" id="up_img_WU_FILE_0" name="imgurl"/>
-                                            <input type="hidden" name="id" v-model="user.id" />
-                                            <div class="controls" style="margin-top: 20px;">
-                                                <button type="submit" class="sui-btn btn-primary" @click="img">保存信息</button>
-                                            </div>
-                                        </div>
+
+                                <div class="new-photo">
+                                    <p>当前头像：</p>
+                                    <div class="upload">
+                                        <img id="imgShow_WU_FILE_0" width="100" height="100" :src="image" alt="">
+                                        <!--<input type="file" id="up_img_WU_FILE_0" />-->
+                                        <form id="form1" action="http://api.leyou.com/api/user/image" enctype="multipart/form-data" method="post">
+                                            <input type="file" name="file" accept="image/*" id="up_img_WU_FILE_0" />
+                                            <input type="hidden" name="id" v-model="user.id">
+                                            <input type="submit" value="确认更改"/>
+                                        </form>
                                     </div>
-                                </form>
+
+                                </div>
                             </div>
                         </div>
 
@@ -191,40 +218,30 @@ $(function(){
             </div>
         </div>
     </div>
+</div>
 
-	<!-- 底部栏位 -->
-	<!--页面底部，由js动态加载-->
-	<div class="clearfix footer"></div>
-	<script type="text/javascript">$(".footer").load("foot.html");</script>
-	<!--页面底部END-->
-
-<script src="./js/vue/vue.js"></script>
-<script src="./js/axios.min.js"></script>
-<script src="./js/common.js"></script>
-<script src="./js/plugins/jquery/jquery.cookie.js"></script>
 <script type="text/javascript">
-    var vm = new Vue({
+    var account = new Vue({
         el: "#account",
-        data: {
-            user: {
-                id: "",
-                name: "",
-                gender: "",
-                year: "",
-                month: "",
-                day: "",
-                //birthday: year + "-" + month + "-" + day,
-                province: "",
-                city: "",
-                district: ""
-            },
-            query:{
-                status:0,
-                page:1,
-                rows:5
-            }
+        data:{
+            user: {},
+            name :"Neil",
+            gender:1,
+            job:"--",
+            image:"img/_/photo_icon.png",
+            year:2020,
+            month:2,
+            day:22,
+            province:"",
+            city:"",
+            district:"",
+            provinceList: [],
+            cityList: [],
+            districtList: []
         },
         created() {
+            this.loadUserInfo();
+            this.selectProvince();
             // 有token，曾经登录过，查询用户信息
             ly.http.get("/auth/verify")
                 .then(resp => {
@@ -236,52 +253,145 @@ $(function(){
                     // 去登录
                     this.gotoLogin();
                 });
+            /*   this.selectCity();
+               this.selectDistrict();*/
         },
-        methods: {
-            logout() {
-                // 删除cookie中的token即可
-                Cookies.remove("LY_TOKEN",{
-                    path:"/",
-                    domain:"leyou.com"
-                });
-                window.location = 'http://www.leyou.com'
+        methods:{
+            //加载用户信息
+            loadUserInfo(){
+                ly.http.get("/userInfo/info&id="+this.user.id).then(resp=>{
+                    this.$watch('province',this.del);
+                    console.log(resp);
+                    var ud= resp.data;
+                    this.name=ud.name;
+                    this.gender=ud.gender;
+                    this.job=ud.job;
+                    if(ud.imgurl!=null&& ud.imgurl!=""){
+                        this.imgurl=ud.imgurl;
+                    }
+                    //处理日期
+                    var date=ud.birthday.split("-");
+                    this.year=date[0];
+                    this.month=date[1];
+                    this.day=date[2];
+                    var addr= ud.address;
+                    var str = addr.split(",");
+                    this.province=str[0];
+                    this.city=str[1];
+                    this.district=str[2];
+                    //this.selectProvince();
+                    this.selectCity();
+                }).catch(error=>{
+                    alert("当前用户还没有保存信息")
+                    console.log(error);
+                })
             },
-            gotoLogin() {
-                window.location = "login.html?returnUrl=" + window.location;
+            //保存用户信息
+            saveUserInfo(){
+                if(this.province==null && this.province==''){
+                    alert("省份不能为空！");
+                    return;
+                }
+                if(this.city==null && this.city==''){
+                    alert("市区不能为空！");
+                    return;
+                }
+                if(this.district==null && this.district==''){
+                    alert("县区不能为空！");
+                    return;
+                }
+                //拼接地址
+                var address = this.province+","+this.city+","+this.district;
+                //拼接生日
+                var birthday =this.year+"-"+this.month+"-"+this.day;
+                //发送异步请求
+                ly.http.post("/userInfo/updateInfo",
+                    {
+                        name:this.name,
+                        gender:this.gender,
+                        birthday:birthday,
+                        job:this.job,
+                        address:address,
+                        imgurl:this.imgurl
+                    }).then(resp=>{
+                    console.log(resp.data);
+                    if(resp.status===204){
+                        alert("修改成功!");
+                        this.loadUserInfo();
+                    }
+
+                }).catch(error=>{
+                    console.log(error);
+                })
             },
-            loadOrder(){
-                // 查询订单信息
-                ly.http.get("/order/list?"+ ly.stringify(this.query))
-                    .then(({data:{items,total}}) => {
-                        this.orders = items;
-                    }).catch(() => this.orders = [])
+            //查询所有的省份
+            selectProvince(){
+                ly.http.get("/address/province").then(resp=>{
+                    this.provinceList = resp.data;
+                }).catch(error=>{
+                    console.log(error);
+                })
             },
-            formatDate:ly.formatDate,
-            formatPrice: ly.formatPrice,
-            getTotalPrice(order){
-                return order.orderDetails.map(d => d.num * d.price).reduce((v1,v2) => v1 + v2, 0);
+            //根据省份名字查询所有的市
+            selectCity(){
+                if(this.province==null||this.province==''){
+                    alert("省份不能为空！");
+                    return;
+                }
+                ly.http.post("/address/city", {province:this.province}).then(resp=>{
+                    /* var element = document.getElementById("#district1");
+                     element.innerHTML="";*/
+                    this.cityList=resp.data;
+                    this.selectDistrict();
+                }).catch(error=>{
+                    console.log(error);
+                })
             },
-            submit() {
-                //提交表单
-                leyou.http.post("/user/info", leyou.stringify(this.user))
-                    .then(resp => {
-                        if (resp.status === 204) {
-                            // 保存成功
-                            alert("保存成功！");
-                        }
-                    })
-                    .catch(() => alert("保存失败！"))
+            //根据市名字查询所有的区
+            selectDistrict(){
+                if(this.city==null||this.city==''){
+                    alert("市区不能为空！");
+                    return;
+                }
+                ly.http.post("/user/address/area",{city:this.city}).then(resp=>{
+                    /* var element = document.getElementById("#district1");
+                     element.innerHTML="";*/
+                    this.districtList=resp.data;
+                }).catch(error=>{
+                    console.log(error);
+                })
+            },
+            del(){
+                /*this.city="";
+                this.district="";*/
             }
         },
         watch:{
-            'query':{
-                deep:true,
-                handler(){
-                    this.loadOrder();
+            province:{
+                immediate:true,
+                handler:function () {
+                    console.log(this.province)
+                    /*   this.city="";
+                       this.district="";*/
                 }
             }
+            /* province:function (newVal, oldVal) {
+                 this.city="";
+                 this.district="";
+                 //this.districtList=[];
+                //alert(this.districtList);
+             }*/
         }
-    });
+    })
+
+
+
 </script>
+<!-- 底部栏位 -->
+<!--页面底部，由js动态加载-->
+<div class="clearfix footer"></div>
+<script type="text/javascript">$(".footer").load("foot.html");</script>
+
+<!--页面底部END-->
 
 </html>

@@ -356,6 +356,7 @@
                 rows: 5
             },
             CommentForm: {
+                userName: null,
                 content: null,
                 level: 5,
                 skuid: 0,
@@ -378,6 +379,7 @@
         },
         methods: {
             submitCommit() {
+                this.CommentForm.userName= this.user.username
                 this.CommentForm.level = $("#level").val();
                 this.CommentForm.content = $("#content").val();
                 ly.http.get("/comment/save", {
@@ -385,6 +387,7 @@
                 }).then(() => {
                     alert("评论成功")
                 }).catch(
+                    // alert("评论失败")
                 )
                 $(".alert-box").fadeOut();
             },

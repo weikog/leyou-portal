@@ -43,9 +43,7 @@
 <script type="text/javascript" src="js/plugins/citypicker/distpicker.js"></script>
 <script type="text/javascript" src="js/plugins/upload/uploadPreview.js"></script>
 <script type="text/javascript" src="js/pages/main.js"></script>
-<script src="./js/vue/vue.js"></script>
-<script src="./js/axios.min.js"></script>
-<script src="./js/common.js"></script>
+
 <script>
     $(function() {
         $.ms_DatePicker({
@@ -57,8 +55,8 @@
 </script>
 </body>
 <!--header-->
-<div id="account">
-    <div class="py-container">
+<div >
+    <div class="py-container" id="homesettinfo">
         <div class="yui3-g home">
             <!--左侧列表-->
             <div class="yui3-u-1-6 list">
@@ -140,21 +138,21 @@
                                             <!--<div data-toggle="distpicker">-->
                                             <div class="form-group area">
                                                 <select id="province1" v-model=province @change="selectCity()">
-                                                    <option v-for="p in provinceList" :value="p.province"  :selected="p.province===province">
+                                                    <option v-for="p in provinceList" v-model="province"  :selected="p.province===province">
                                                         {{p.province}}
                                                     </option>
                                                 </select>
                                             </div>
                                             <div class="form-group area">
                                                 <select class="form-control" id="city1" v-model=city @change="selectDistrict()">
-                                                    <option v-for="c in cityList" :value="c.city"  :selected="c.city===city">
+                                                    <option v-for="c in cityList"  v-model="city"  :selected="c.city===city">
                                                         {{c.city}}
                                                     </option>
                                                 </select>
                                             </div>
                                             <div class="form-group area">
                                                 <select class="form-control" id="district1" v-model=district>
-                                                    <option v-for="d in districtList" :value="d.area"  :selected="d.area ===district ">
+                                                    <option v-for="d in districtList"  v-model="area"  :selected="d.area ===district ">
                                                         {{d.area}}
                                                     </option>
                                                 </select>
@@ -200,7 +198,7 @@
                                 <div class="new-photo">
                                     <p>当前头像：</p>
                                     <div class="upload">
-                                        <img id="imgShow_WU_FILE_0" width="100" height="100" :src="user.imgurl" alt="">
+                                        <img id="imgShow_WU_FILE_0" width="100" height="100" v-model="user.imgurl" alt="">
                                         <!--<input type="file" id="up_img_WU_FILE_0" />-->
                                         <form id="form1" action="http://api.leyou.com/api/user/image" enctype="multipart/form-data" method="post">
                                             <input type="file" name="file" accept="image/*" id="up_img_WU_FILE_0" />
@@ -219,15 +217,19 @@
         </div>
     </div>
 </div>
-
+<script src="./js/vue/vue.js"></script>
+<script src="./js/vue/vuetify.js"></script>
+<script src="./js/axios.min.js"></script>
+<script src="./js/common.js"></script>
 <script type="text/javascript">
-    var account = new Vue({
-        el: "#account",
+    var homesettinfo = new Vue({
+        el: "#homesettinfo",
         data:{
             user: {},
             name :"Neil",
             gender:1,
             job:"--",
+            image:"",
             imgurl:"img/_/photo_icon.png",
             year:2020,
             month:2,
@@ -247,7 +249,7 @@
                     this.user = resp.data;
                     // 查询订单信息
                     this.loadOrder();
-
+                    this.loadUserInfo();
                 })
                 .catch(() => {
                     // 去登录
@@ -255,7 +257,7 @@
                 });
             /*   this.selectCity();
                this.selectDistrict();*/
-            this.loadUserInfo();
+
             this.selectProvince();
 
 
@@ -263,7 +265,7 @@
         methods:{
             //加载用户信息
             loadUserInfo(){
-                ly.http.get("/userInfo/info",{params:{id:this.user.id}}).then(resp=>{
+                ly.http.get("/user/userInfo/info",{params:{id:33}}).then(resp=>{
                     this.$watch('province',this.del);
                     console.log(resp);
                     var userInfo= resp.data;
@@ -308,16 +310,20 @@
                 var address = this.province+","+this.city+","+this.district;
                 //拼接生日
                 var birthday =this.year+"-"+this.month+"-"+this.day;
+                const userInfo={
+                    name:this.name,
+                    gender:this.gender,
+                    birthday:birthday,
+                    job:this.job,
+                    address:address,
+                    imgurl:this.imgurl
+                }
                 //发送异步请求
-                ly.http.post("/userInfo/updateInfo",
-                    {
-                        name:this.name,
-                        gender:this.gender,
-                        birthday:birthday,
-                        job:this.job,
-                        address:address,
-                        imgurl:this.imgurl
-                    }).then(resp=>{
+                ly.http.post("/user/userInfo/updateInfo",
+                    ly.stringify(
+                        userInfo
+                           )
+                    ).then(resp=>{
                     console.log(resp.data);
                     if(resp.status===204){
                         alert("修改成功!");
@@ -330,7 +336,7 @@
             },
             //查询所有的省份
             selectProvince(){
-                ly.http.get("/address/province").then(resp=>{
+                ly.http.get("/user/address/province").then(resp=>{
                     this.provinceList = resp.data;
                 }).catch(error=>{
                     console.log(error);
@@ -338,11 +344,11 @@
             },
             //根据省份名字查询所有的市
             selectCity(){
-                if(this.province==null||this.province==''){
+                if(this.province==null&&this.province==''){
                     alert("省份不能为空！");
                     return;
                 }
-                ly.http.post("/address/city", {province:this.province}).then(resp=>{
+                ly.http.get("user/address/city",{params: {province:this.province}}).then(resp=>{
                     /* var element = document.getElementById("#district1");
                      element.innerHTML="";*/
                     this.cityList=resp.data;
@@ -353,11 +359,11 @@
             },
             //根据市名字查询所有的区
             selectDistrict(){
-                if(this.city==null||this.city==''){
+                if(this.city==null&&this.city==''){
                     alert("市区不能为空！");
                     return;
                 }
-                ly.http.post("/user/address/area",{city:this.city}).then(resp=>{
+                ly.http.get("/user/address/area",{params: {city:this.city}}).then(resp=>{
                     /* var element = document.getElementById("#district1");
                      element.innerHTML="";*/
                     this.districtList=resp.data;

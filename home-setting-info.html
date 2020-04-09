@@ -200,7 +200,7 @@
                                 <div class="new-photo">
                                     <p>当前头像：</p>
                                     <div class="upload">
-                                        <img id="imgShow_WU_FILE_0" width="100" height="100" :src="image" alt="">
+                                        <img id="imgShow_WU_FILE_0" width="100" height="100" :src="user.imgurl" alt="">
                                         <!--<input type="file" id="up_img_WU_FILE_0" />-->
                                         <form id="form1" action="http://api.leyou.com/api/user/image" enctype="multipart/form-data" method="post">
                                             <input type="file" name="file" accept="image/*" id="up_img_WU_FILE_0" />
@@ -228,7 +228,7 @@
             name :"Neil",
             gender:1,
             job:"--",
-            image:"img/_/photo_icon.png",
+            imgurl:"img/_/photo_icon.png",
             year:2020,
             month:2,
             day:22,
@@ -237,17 +237,17 @@
             district:"",
             provinceList: [],
             cityList: [],
-            districtList: []
+            districtList: [],
+                userInfo:[]
         },
         created() {
-            this.loadUserInfo();
-            this.selectProvince();
             // 有token，曾经登录过，查询用户信息
             ly.http.get("/auth/verify")
                 .then(resp => {
                     this.user = resp.data;
                     // 查询订单信息
                     this.loadOrder();
+
                 })
                 .catch(() => {
                     // 去登录
@@ -255,26 +255,30 @@
                 });
             /*   this.selectCity();
                this.selectDistrict();*/
+            this.loadUserInfo();
+            this.selectProvince();
+
+
         },
         methods:{
             //加载用户信息
             loadUserInfo(){
-                ly.http.get("/userInfo/info&id="+this.user.id).then(resp=>{
+                ly.http.get("/userInfo/info",{params:{id:this.user.id}}).then(resp=>{
                     this.$watch('province',this.del);
                     console.log(resp);
-                    var ud= resp.data;
-                    this.name=ud.name;
-                    this.gender=ud.gender;
-                    this.job=ud.job;
-                    if(ud.imgurl!=null&& ud.imgurl!=""){
-                        this.imgurl=ud.imgurl;
+                    var userInfo= resp.data;
+                    this.name=userInfo.name;
+                    this.gender=userInfo.gender;
+                    this.job=userInfo.job;
+                    if(userInfo.imgurl!=null&& userInfo.imgurl!=""){
+                        this.imgurl=userInfo.imgurl;
                     }
                     //处理日期
-                    var date=ud.birthday.split("-");
+                    var date=userInfo.birthday.split("-");
                     this.year=date[0];
                     this.month=date[1];
                     this.day=date[2];
-                    var addr= ud.address;
+                    var addr= userInfo.address;
                     var str = addr.split(",");
                     this.province=str[0];
                     this.city=str[1];

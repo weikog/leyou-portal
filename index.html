@@ -42,7 +42,7 @@
 					<div class="all-sort-list2">
 
 						<div class="item bo" v-for="c in allMenuDTOS" :key="c.groupId" >
-							<h3><a :href="'/search.html?key='+ c.names" >{{c.names}}</a></h3>
+							<h3><a :href="'/search.html?key='+ k" v-for="(k,i) in (c.names).split('、')" :key="i">{{i == 0 ? k :("、"+k)}}</a></h3>
 							<div class="item-list clearfix">
 								<div class="subitem">
 									<dl class="fore1" v-for="m in c.menuDTOS" :key="m.id">

@@ -11,12 +11,11 @@
     <link rel="stylesheet" type="text/css" href="css/pages-JD-index.css" />
     <link rel="stylesheet" type="text/css" href="css/widget-jquery.autocomplete.css" />
     <link rel="stylesheet" type="text/css" href="css/widget-cartPanelView.css" />
-	<script src="/js/plugins/jquery/jquery.min.js"></script>
 
 </head>
 
 <body>
-	
+
 	<!-- 头部栏位 -->
 	<div id="nav-bottom">
 		<ly-top/>
@@ -42,11 +41,11 @@
 				<div class="yui3-u Left all-sort-list">
 					<div class="all-sort-list2">
 
-						<div class="item bo" v-for="c in allMenuDTOS" v-show="showMenu" :key="c.groupId">
-							<h3><a :href="'/search.html?key='+ c.names" >{{c.names}}</a></h3>
+						<div class="item bo" v-for="c in allMenuDTOS" :key="c.groupId">
+							<h3><a :href="'/search.html?key='+fArray"v-for="(fArray,fkey) in firstMenu[c.groupId]" :key="fkey">{{firstMenu[c.groupId].length===(fkey+1)?fArray:(fArray+"、")}}</a></h3>
 							<div class="item-list clearfix">
 								<div class="subitem">
-									<dl class="fore1"  v-for="m in c.menuDTOS" :key="m.id">
+									<dl class="fore1" v-for="m in c.menuDTOS" :key="m.id">
 										<dt><a :href="'/search.html?key='+ m.name">{{m.name}}</a></dt>
 										<dd>
 											<em v-for="t in m.thirCategorys" :key="t.id">
@@ -57,6 +56,7 @@
 								</div>
 							</div>
 						</div>
+
 					</div>
 				</div>
 				<div class="yui3-u Center banerArea">
@@ -192,7 +192,7 @@
 			data: {
 				ly,
 				allMenuDTOS: [],
-				showMenu:false
+                firstMenu:[],
 			},
 			created(){
 				this.loadCategorys();
@@ -203,9 +203,20 @@
 					 ly.http.get("/item/category/menu")
 							.then((resp)=>{
 								this.allMenuDTOS = resp.data;
-								this.showMenu = true;
+								resp.data.forEach(e=>{
+                                    this.firstMenu.push(e.names.split("、"));
+                                })
 							});
 				}
+			},
+			updated(){
+				$('.all-sort-list2 > .item').hover(function() {
+					$(this).addClass('hover');
+					$(this).children('.item-list').css('display', 'block');
+				}, function() {
+					$(this).removeClass('hover');
+					$(this).children('.item-list').css('display', 'none');
+				});
 			}
 		});
 

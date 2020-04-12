@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" type="text/css" href="css/webbase.css"/>
     <link rel="stylesheet" type="text/css" href="css/pages-seckillOrder.css"/>
+    <script src="js/plugins/jquery/jquery.min.js"></script>
 </head>
 
 <body>
@@ -20,22 +21,6 @@
 <div id="nav-bottom"></div>
 <script type="text/javascript">$("#nav-bottom").load("top.html");</script>
 
-<script type="text/javascript" src="js/plugins/jquery/jquery.min.js"></script>
-<script type="text/javascript">
-    $(function () {
-        $("#service").hover(function () {
-            $(".service").show();
-        }, function () {
-            $(".service").hide();
-        });
-        $("#shopcar").hover(function () {
-            $("#shopcarlist").show();
-        }, function () {
-            $("#shopcarlist").hide();
-        });
-
-    })
-</script>
 <script type="text/javascript" src="js/plugins/jquery.easing/jquery.easing.min.js"></script>
 <script type="text/javascript" src="js/plugins/sui/sui.min.js"></script>
 <script type="text/javascript" src="js/plugins/jquery-placeholder/jquery.placeholder.min.js"></script>
@@ -107,11 +92,55 @@
                     <div class="order-detail">
                         <div class="orders">
                             <div class="choose-order">
+                                <div class="alert-box" style="background-color:#fff; display:none;top: 150px;left: 35%;position: absolute;
+                                      show:true;z-index:9999;  width: 400px; height: 260px;border: #5bc0de 2px solid; font-size: 18px;border-radius: 20px">
+                                    <div style="background-color: #46b8da;width: 376px;height: 1.4rem; border: #5bc0de 2px solid;border-radius:20px 20px 0px 0px;padding: 10px;font-weight: bolder;color: #fff">
+                                        请对订单进行评价
+
+                                    </div>
+                                    <div class="alert">
+                                        <table align="center" style="margin-top: 20px" >
+                                            <tr>
+                                                <td style="text-align: right;width: 100px">评分：</td>
+                                                <td style="width: 300px"><select id="level" name="level"style="width: 100px">
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                </select></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: right" align="top">评论内容:</td>
+                                                <td><input id="content" type="text" style="height:6rem;width: 10rem;width:250px " name="content"></td>
+                                            </tr>
+                                            <tr style="padding-top: 40px">
+                                                <td>
+
+                                                </td>
+                                                <td>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <table width="400px">
+                                            <tr>
+                                                <td align="center">
+                                                    <button id="submitComment" @click="submitCommit()">提交</button>
+                                                        <button  @click="cancelsubmit()">取消</button>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
                                 <div class="sui-pagination pagination-large top-pages">
                                     <ul>
-                                        <li class="prev":class="{disabled:query.page===1}" ><a href="#" @click="query.page>1?query.page--:''">«上一页</a></li>
+                                        <li class="prev" :class="{disabled:query.page===1}"><a href="#"
+                                                                                               @click="query.page>1?query.page--:''">«上一页</a>
+                                        </li>
                                         <li class="active"><a href="#">{{query.page}}</a></li>
-                                        <li class="next" :class="{disabled:query.page==totalPage}"><a href="#" @click="query.page<totalPage?query.page++:''">下一页»</a></li>
+                                        <li class="next" :class="{disabled:query.page==totalPage}"><a href="#"
+                                                                                                      @click="query.page<totalPage?query.page++:''">下一页»</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -142,10 +171,14 @@
                                         <td width
                                                     ="5%" class="center">{{d.num}}
                                         </td>
-                                        <td width="8%" class="center" :rowspan="o.detailList.length" v-if="j === 0">
-                                            <ul class="unstyled" v-if="o.status === 3">
-                                                <li>已发货</li>
-                                                <li><a>退货/退款</a></li>
+                                        <td width="8%" class="center">
+                                            <ul class="unstyled">
+                                                <li v-if="o.status === 3">已发货</li>
+                                                <li v-if="o.status === 3"><a>退货/退款</a></li>
+                                                <li v-if="o.status === 4"><a id="commonForm"
+                                                                             @click="handleComment(o.orderId,d.skuId)"
+                                                                             class="sui-btn btn-info">立即评价</a>
+                                                </li>
                                             </ul>
                                         </td>
                                         <td width="10%" class="center" :rowspan="o.detailList.length" v-if="j === 0">
@@ -159,6 +192,7 @@
                                                 <li v-if="o.status === 1">等待买家付款</li>
                                                 <li v-if="o.status === 2">已付款</li>
                                                 <li v-if="o.status === 3">已发货</li>
+                                                <li v-if="o.status === 6">已成交</li>
                                                 <li><a href="home-orderDetail.html" class="btn">订单详情 </a></li>
                                             </ul>
                                         </td>
@@ -170,10 +204,8 @@
                                                 </li>
                                                 <li v-if="o.status === 3"><a href="#" class="sui-btn btn-info">确认收货</a>
                                                 </li>
-                                                <li v-if="o.status === 4"><a href="#" class="sui-btn btn-info">立即评价</a>
-                                                </li>
                                                 <li v-if="o.status === 3">4天23时后自动确认</li>
-                                                <li><a href="javascript:void(0)">取消订单</a></li>
+                                                <li v-if="o.status === 1 || o.status === 2"><a href="javascript:void(0)">取消订单</a></li>
                                             </ul>
                                         </td>
                                     </tr>
@@ -186,14 +218,22 @@
                         <div class="choose-order">
                             <div class="sui-pagination pagination-large top-pages">
                                 <ul>
-                                    <li class="prev":class="{disabled:query.page===1}" ><a href="#" @click="query.page>1?query.page--:''">«上一页</a></li>
-                                    <li :class="{active:p==query.page}" v-for="p in totalPage" @click="query.page=p"><a href="#">{{p}}</a></li>
-                                    <li class="dotted" v-if="totalPage>3 && totalPage-query.page>=1"><span>...</span></li>
-                                    <li class="next" :class="{disabled:query.page==totalPage}"><a href="#" @click="query.page<totalPage?query.page++:''">下一页»</a></li>
+                                    <li class="prev" :class="{disabled:query.page===1}"><a href="#"
+                                                                                           @click="query.page>1?query.page--:''">«上一页</a>
+                                    </li>
+                                    <li :class="{active:p==query.page}" v-for="p in totalPage" @click="query.page=p"><a
+                                            href="#">{{p}}</a></li>
+                                    <li class="dotted" v-if="totalPage>3 && totalPage-query.page>=1"><span>...</span>
+                                    </li>
+                                    <li class="next" :class="{disabled:query.page==totalPage}"><a href="#"
+                                                                                                  @click="query.page<totalPage?query.page++:''">下一页»</a>
+                                    </li>
                                 </ul>
                                 <div style="margin-top: -5px"><span>共{{totalPage}}页&nbsp;</span><span>
                                             到
-                                    <input type="text" id="pageNum" class="page-num"><button class="page-confirm" style="margin-top: 5px" @click="swapPage()">确定</button>
+                                    <input type="text" id="pageNum" class="page-num"><button class="page-confirm"
+                                                                                             style="margin-top: 5px"
+                                                                                             @click="swapPage()">确定</button>
                                             页</span></div>
                             </div>
                         </div>
@@ -302,6 +342,7 @@
 <script src="./js/vue/vue.js"></script>
 <script src="./js/axios.min.js"></script>
 <script src="./js/common.js"></script>
+
 <script src="./js/plugins/jquery/jquery.cookie.js"></script>
 <script type="text/javascript">
     var vm = new Vue({
@@ -309,14 +350,22 @@
         data: {
             user: {},
             orders: [],
-            totalPage:0,
+            totalPage: 0,
             query: {
                 status: 0,
                 page: 1,
                 rows: 5
-            }
+            },
+            CommentForm: {
+                userName: null,
+                content: null,
+                level: 5,
+                skuid: 0,
+                orderId: 0
+            },
         },
         created() {
+            $('.alert-box').hide();
             // 有token，曾经登录过，查询用户信息
             ly.http.get("/auth/verify")
                 .then(resp => {
@@ -330,6 +379,28 @@
                 });
         },
         methods: {
+            submitCommit() {
+                this.CommentForm.userName= this.user.username
+                this.CommentForm.level = $("#level").val();
+                this.CommentForm.content = $("#content").val();
+                ly.http.get("/comment/save", {
+                    params: this.CommentForm
+                }).then(() => {
+                    alert("评论成功")
+                    window.location.reload();
+                }).catch(
+                    // alert("评论失败")
+                )
+                $(".alert-box").fadeOut();
+            },
+            cancelsubmit() {
+                $(".alert-box").fadeOut();
+            },
+            handleComment(orderId, skuId) {
+                $(".alert-box").fadeIn();
+                this.CommentForm.orderId = orderId;
+                this.CommentForm.skuid = skuId;
+            },
             logout() {
                 // 删除cookie中的token即可
                 Cookies.remove("LY_TOKEN", {
@@ -344,9 +415,9 @@
             loadOrder() {
                 // 查询订单信息
                 ly.http.get("/order/list?" + ly.stringify(this.query))
-                    .then(({data: {items, total,totalPage}}) => {
+                    .then(({data: {items, total, totalPage}}) => {
                         this.orders = items;
-                        this.totalPage=totalPage;
+                        this.totalPage = totalPage;
                     }).catch(() => this.orders = [])
             },
             formatDate: ly.formatDate,
@@ -354,10 +425,10 @@
             getTotalPrice(order) {
                 return order.detailList.map(d => d.num * d.price).reduce((v1, v2) => v1 + v2, 0);
             },
-            swapPage(){
+            swapPage() {
                 let val = $("#pageNum").val();
-                if (val>=1 && val<= this.totalPage)
-                this.query.page =val;
+                if (val >= 1 && val <= this.totalPage)
+                    this.query.page = val;
             }
         },
         watch: {

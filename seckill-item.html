@@ -71,7 +71,7 @@
                 <div class="zoom">
                     <!--默认第一个预览-->
                     <div id="preview" class="spec-preview">
-                        <span class="jqzoom"><img jqimg="img/_/b1.png" src="img/_/s1.png"/></span>
+                        <span class="jqzoom"><img jqimg="img/_/b1.png" :src="sku.images"/></span>
                     </div>
                 </div>
 
@@ -138,7 +138,9 @@
                             <ul class="btn-choose unstyled">
                                 <li>
                                     <a target="_blank" class="sui-btn  btn-danger addshopcar"
-                                       @click="submit()">立即抢购</a>
+                                       @click="sku.store>sku.sold?submit():''" v-if="sku.store>sku.sold" >{{sku.store>sku.sold?'立即抢购':'已售完'}}</a>
+                                    <a target="_blank" class="sui-btn  btn-danger addshopcar"
+                                       @click="sku.store>sku.sold?submit():''" v-else style="opacity: 0.2;pointer-events: none;" >{{sku.store>sku.sold?'立即抢购':'已售完'}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -422,6 +424,7 @@
                     }).catch()
 
                 }).catch(() => {
+                    alert("请登录后进行抢购！")
                     window.location.href = "/login.html?returnUrl=" + window.location.href;
                 })
             },

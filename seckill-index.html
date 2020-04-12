@@ -73,7 +73,8 @@
                     </div>
                     <div>剩余<b class='owned'>{{sku.store-sku.sold}}</b>件</div>
                 </div>
-                <a class='sui-btn btn-block btn-buy' @click="toSeckillIten(sku.skuId)" target='_blank' value="{{sku.store>sku.sold?'立即抢购':'已抢完'}}"></a>
+                <a class='sui-btn btn-block btn-buy grey' @click="sku.store>sku.sold?toSeckillIten(sku.skuId):''" v-if="sku.store>sku.sold" target='_blank' >{{sku.store>sku.sold?'立即抢购':'已售完'}}</a>
+                <a class='sui-btn btn-block btn-buy grey' @click="sku.store>sku.sold?toSeckillIten(sku.skuId):''" v-else style="opacity: 0.2;pointer-events: none;" target='_blank' >{{sku.store>sku.sold?'立即抢购':'已售完'}}</a>
             </li>
         </ul>
     </div>
